@@ -14,6 +14,8 @@
 		C51D5ACA290A9E4E00A6C2C1 /* taskedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C51D5AC9290A9E4E00A6C2C1 /* taskedTests.swift */; };
 		C51D5AD4290A9E4E00A6C2C1 /* taskedUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C51D5AD3290A9E4E00A6C2C1 /* taskedUITests.swift */; };
 		C51D5AD6290A9E4E00A6C2C1 /* taskedUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C51D5AD5290A9E4E00A6C2C1 /* taskedUITestsLaunchTests.swift */; };
+		C51D5AE3290AA47900A6C2C1 /* tasksViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C51D5AE2290AA47900A6C2C1 /* tasksViewModel.swift */; };
+		C51D5AE7290AA5D600A6C2C1 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = C51D5AE6290AA5D600A6C2C1 /* Task.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +46,8 @@
 		C51D5ACF290A9E4E00A6C2C1 /* taskedUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = taskedUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C51D5AD3290A9E4E00A6C2C1 /* taskedUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = taskedUITests.swift; sourceTree = "<group>"; };
 		C51D5AD5290A9E4E00A6C2C1 /* taskedUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = taskedUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		C51D5AE2290AA47900A6C2C1 /* tasksViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tasksViewModel.swift; sourceTree = "<group>"; };
+		C51D5AE6290AA5D600A6C2C1 /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,10 +98,12 @@
 		C51D5AB7290A9E4B00A6C2C1 /* tasked */ = {
 			isa = PBXGroup;
 			children = (
+				C51D5AE4290AA5BA00A6C2C1 /* Shared */,
 				C51D5AB8290A9E4B00A6C2C1 /* taskedApp.swift */,
 				C51D5ABA290A9E4B00A6C2C1 /* ContentView.swift */,
 				C51D5ABC290A9E4E00A6C2C1 /* Assets.xcassets */,
 				C51D5ABE290A9E4E00A6C2C1 /* Preview Content */,
+				C51D5AE2290AA47900A6C2C1 /* tasksViewModel.swift */,
 			);
 			path = tasked;
 			sourceTree = "<group>";
@@ -125,6 +131,22 @@
 				C51D5AD5290A9E4E00A6C2C1 /* taskedUITestsLaunchTests.swift */,
 			);
 			path = taskedUITests;
+			sourceTree = "<group>";
+		};
+		C51D5AE4290AA5BA00A6C2C1 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				C51D5AE5290AA5C400A6C2C1 /* Models */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		C51D5AE5290AA5C400A6C2C1 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				C51D5AE6290AA5D600A6C2C1 /* Task.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -257,7 +279,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C51D5AE7290AA5D600A6C2C1 /* Task.swift in Sources */,
 				C51D5ABB290A9E4B00A6C2C1 /* ContentView.swift in Sources */,
+				C51D5AE3290AA47900A6C2C1 /* tasksViewModel.swift in Sources */,
 				C51D5AB9290A9E4B00A6C2C1 /* taskedApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
