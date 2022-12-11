@@ -49,4 +49,13 @@ class TaskRepository: ObservableObject {
         }
     }
     
+    func removeTask(_ task: Task) {
+        do {
+            try db.collection("tasks").document(task.id).delete()
+        }
+        catch {
+            fatalError("Unable to encode task: \(error.localizedDescription)")
+        }
+    }
+    
 }

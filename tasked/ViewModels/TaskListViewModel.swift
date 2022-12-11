@@ -30,4 +30,8 @@ class TaskListViewModel: ObservableObject {
 //        self.taskCellViewModels.append(taskVM)
     }
     
+    func removeTask(task: Task) {
+        taskRepository.removeTask(task)
+    }
+    
 }

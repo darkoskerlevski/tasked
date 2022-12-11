@@ -37,6 +37,7 @@
 		C55D2A1C29183BED005017FA /* FirebaseFunctionsCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = C55D2A1B29183BED005017FA /* FirebaseFunctionsCombine-Community */; };
 		C55D2A1E29183BED005017FA /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = C55D2A1D29183BED005017FA /* FirebaseStorage */; };
 		C55D2A2029183BED005017FA /* FirebaseStorageCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = C55D2A1F29183BED005017FA /* FirebaseStorageCombine-Community */; };
+		C55F614A2940BCB4001825FA /* AddNewTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C55F61492940BCB4001825FA /* AddNewTaskView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,6 +73,7 @@
 		C522DC732910331400097296 /* TaskListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListViewModel.swift; sourceTree = "<group>"; };
 		C522DC782910441A00097296 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C522DC82291084B600097296 /* TaskRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRepository.swift; sourceTree = "<group>"; };
+		C55F61492940BCB4001825FA /* AddNewTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewTaskView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -189,6 +191,7 @@
 			isa = PBXGroup;
 			children = (
 				C51D5ABA290A9E4B00A6C2C1 /* TaskListView.swift */,
+				C55F61492940BCB4001825FA /* AddNewTaskView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -370,6 +373,7 @@
 				C522DC742910331400097296 /* TaskListViewModel.swift in Sources */,
 				C522DC6E291026E300097296 /* Task.swift in Sources */,
 				C51D5AB9290A9E4B00A6C2C1 /* taskedApp.swift in Sources */,
+				C55F614A2940BCB4001825FA /* AddNewTaskView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

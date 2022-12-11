@@ -12,35 +12,62 @@ struct TaskListView: View {
     @ObservedObject var taskListVM = TaskListViewModel()
     let tasks = testDataTasks
     @State var presentAddNewItem: Bool = false
+    @State var showCompletedOnly: Bool = false
+    
     
     var body: some View {
         NavigationView {
-            VStack() {
+            VStack {
                 List {
                     ForEach(taskListVM.taskCellViewModels) { taskCellVM in
-                        TaskCell(taskCellVM: taskCellVM)
-                    }
-                    if presentAddNewItem {
-                        TaskCell(taskCellVM: TaskCellViewModel(task: Task(title: "", completed: false))) { task in
-                            self.taskListVM.addTask(task: task)
-                            self.presentAddNewItem.toggle()
+                        Group {
+                            if showCompletedOnly {
+                                if taskCellVM.task.completed {
+                                    taskCellView(taskCellVM: taskCellVM)
+                                }
+                            }
+                            else
+                            {
+                                taskCellView(taskCellVM: taskCellVM)
+                            }
                         }
                     }
                 }
-                Button(action: {
-                    self.presentAddNewItem.toggle()
-                }) {
-                    HStack {
-                        Image(systemName: "plus.circle.fill")
-                            .resizable()
-                            .frame(width: 20, height: 20)
-                        Text("Add New Task")
+                HStack {
+                    Toggle("", isOn: $showCompletedOnly)
+                        .labelsHidden()
+                    Text("completed only?")
+                    Spacer()
+                    NavigationLink(destination: AddNewTaskView(task: nil)) {
+                        HStack {
+                            Image(systemName: "plus.circle.fill")
+                                .resizable()
+                                .frame(width: 20, height: 20)
+                            Text("Add New Task")
+                        }
                     }
+                    .buttonStyle(DefaultButtonStyle())
                 }
+                .padding([.leading, .trailing])
             }
             .navigationTitle("All tasks")
         }
         
+    }
+    
+    fileprivate func taskCellView(taskCellVM: TaskCellViewModel) -> some View {
+        return TaskCell(taskCellVM: taskCellVM)
+            .swipeActions(allowsFullSwipe: false) {
+                Button(role: .destructive) {
+                    taskListVM.removeTask(task: taskCellVM.task)
+                } label: {
+                    Label("Delete", systemImage: "trash.fill")
+                }
+                NavigationLink(destination: AddNewTaskView(task: taskCellVM.task)) {
+                    Label("Edit", systemImage: "pencil")
+                }   
+                .tint(.blue)
+            }
     }
     
     struct ContentView_Previews: PreviewProvider {
