@@ -38,7 +38,7 @@ struct TaskListView: View {
                         .labelsHidden()
                     Text("completed only?")
                     Spacer()
-                    NavigationLink(destination: AddNewTaskView(task: nil)) {
+                    NavigationLink(destination: AddNewTaskView(task: Task(title: "", completed: false), createNewTask: false)) {
                         HStack {
                             Image(systemName: "plus.circle.fill")
                                 .resizable()
@@ -63,10 +63,6 @@ struct TaskListView: View {
                 } label: {
                     Label("Delete", systemImage: "trash.fill")
                 }
-                NavigationLink(destination: AddNewTaskView(task: taskCellVM.task)) {
-                    Label("Edit", systemImage: "pencil")
-                }   
-                .tint(.blue)
             }
     }
     
@@ -90,9 +86,12 @@ struct TaskCell: View {
                 .onTapGesture {
                     self.taskCellVM.task.completed.toggle()
                 }
-            TextField("Enter a new task", text: $taskCellVM.task.title, onCommit: {
-                self.onCommit(self.taskCellVM.task)
-            })
+//            TextField("Enter a new task", text: $taskCellVM.task.title, onCommit: {
+//                self.onCommit(self.taskCellVM.task)
+//            })
+            NavigationLink(destination: AddNewTaskView(task: taskCellVM.task, createNewTask: false)) {
+                Text(taskCellVM.task.title)
+            }
         }
     }
 }

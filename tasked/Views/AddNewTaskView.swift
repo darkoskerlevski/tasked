@@ -8,23 +8,29 @@
 import SwiftUI
 
 struct AddNewTaskView: View {
-    @State var taskName: String = ""
-    @State var taskCompletion: Bool = false
+    @State var taskName: String
+    @State var taskCompletion: Bool
+    @State var createNewTask: Bool
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var taskListVM = TaskListViewModel()
     @State private var showingAlert = false
-    @State var task: Task?
+    @State var task: Task
     
-    init(task: Task?) {
-        if task != nil {
-            taskName = task!.title
-            taskCompletion = task!.completed
-        }
+    init(task: Task, createNewTask: Bool) {
+        _taskName = State(initialValue: task.title)
+        _taskCompletion = State(initialValue: task.completed)
+        _createNewTask = State(initialValue: createNewTask)
+        _task = State(initialValue: task)
     }
     
     var body: some View {
         VStack {
-            Text("Add a new task")
+            if createNewTask {
+                Text("Add a new task")
+            }
+            else {
+                Text("Edit task")
+            }
             TextField("Task name", text: $taskName)
                 .foregroundColor(.purple)
             Toggle(isOn: $taskCompletion) {
@@ -33,7 +39,14 @@ struct AddNewTaskView: View {
             HStack {
                 Button(action: {
                     if !taskName.isEmpty {
-                        taskListVM.addTask(task: Task(title: taskName, completed: taskCompletion))
+                        if createNewTask {
+                            taskListVM.addTask(task: Task(title: taskName, completed: taskCompletion))
+                        }
+                        else {
+                            task.title = taskName
+                            task.completed = taskCompletion
+                            taskListVM.updateTask(task: task)
+                        }
                         presentationMode.wrappedValue.dismiss()
                     }
                     else {
