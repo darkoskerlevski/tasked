@@ -7,12 +7,12 @@
 
 import SwiftUI
 
-struct TaskListView: View {
+struct AllTasksListView: View {
     
     @ObservedObject var taskListVM = TaskListViewModel()
     let tasks = testDataTasks
     @State var presentAddNewItem: Bool = false
-    @State var showCompletedOnly: Bool = false
+    @State var showCompleted: Bool = true
     
     
     var body: some View {
@@ -21,8 +21,8 @@ struct TaskListView: View {
                 List {
                     ForEach(taskListVM.taskCellViewModels) { taskCellVM in
                         Group {
-                            if showCompletedOnly {
-                                if taskCellVM.task.completed {
+                            if !showCompleted {
+                                if !taskCellVM.task.completed {
                                     taskCellView(taskCellVM: taskCellVM)
                                 }
                             }
@@ -34,11 +34,11 @@ struct TaskListView: View {
                     }
                 }
                 HStack {
-                    Toggle("", isOn: $showCompletedOnly)
+                    Toggle("", isOn: $showCompleted)
                         .labelsHidden()
-                    Text("completed only?")
+                    Text("complete?")
                     Spacer()
-                    NavigationLink(destination: AddNewTaskView(task: Task(title: "", completed: false), createNewTask: false)) {
+                    NavigationLink(destination: AddNewTaskView(task: Task(title: "", completed: false), createNewTask: true)) {
                         HStack {
                             Image(systemName: "plus.circle.fill")
                                 .resizable()
@@ -49,6 +49,7 @@ struct TaskListView: View {
                     .buttonStyle(DefaultButtonStyle())
                 }
                 .padding([.leading, .trailing])
+                Divider()
             }
             .navigationTitle("All tasks")
         }
@@ -68,7 +69,7 @@ struct TaskListView: View {
     
     struct ContentView_Previews: PreviewProvider {
         static var previews: some View {
-            TaskListView()
+            AllTasksListView()
         }
     }
 }

@@ -7,7 +7,7 @@
 
 import Foundation
 import FirebaseFirestore
-import simd
+
 
 class TaskRepository: ObservableObject {
     
