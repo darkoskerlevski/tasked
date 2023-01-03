@@ -12,7 +12,7 @@ struct AllTasksListView: View {
     @ObservedObject var taskListVM = TaskListViewModel()
     let tasks = testDataTasks
     @State var presentAddNewItem: Bool = false
-    @State var showCompleted: Bool = true
+    @State var showCompleted: Bool = false
     
     
     var body: some View {
@@ -21,7 +21,7 @@ struct AllTasksListView: View {
                 List {
                     ForEach(taskListVM.taskCellViewModels) { taskCellVM in
                         Group {
-                            if !showCompleted {
+                            if showCompleted {
                                 if !taskCellVM.task.completed {
                                     taskCellView(taskCellVM: taskCellVM)
                                 }
@@ -36,7 +36,7 @@ struct AllTasksListView: View {
                 HStack {
                     Toggle("", isOn: $showCompleted)
                         .labelsHidden()
-                    Text("complete?")
+                    Text("incomplete?")
                     Spacer()
                     NavigationLink(destination: AddNewTaskView(task: Task(title: "", completed: false), createNewTask: true)) {
                         HStack {
