@@ -14,9 +14,9 @@ struct AddNewTaskView: View {
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var taskListVM = TaskListViewModel()
     @State private var showingAlert = false
-    @State var task: Task
+    @State var task: CustomTask
     
-    init(task: Task, createNewTask: Bool) {
+    init(task: CustomTask, createNewTask: Bool) {
         _taskName = State(initialValue: task.title)
         _taskCompletion = State(initialValue: task.completed)
         _createNewTask = State(initialValue: createNewTask)
@@ -40,7 +40,7 @@ struct AddNewTaskView: View {
                 Button(action: {
                     if !taskName.isEmpty {
                         if createNewTask {
-                            taskListVM.addTask(task: Task(title: taskName, completed: taskCompletion))
+                            taskListVM.addTask(task: CustomTask(title: taskName, completed: taskCompletion))
                         }
                         else {
                             task.title = taskName

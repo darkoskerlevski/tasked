@@ -11,7 +11,7 @@ struct AllTasksListView: View {
     
     @ObservedObject var taskListVM = TaskListViewModel()
     let tasks = testDataTasks
-    @State var presentAddNewItem: Bool = false
+    @State var showSettings: Bool = false
     @State var showCompleted: Bool = false
     
     
@@ -23,12 +23,12 @@ struct AllTasksListView: View {
                         Group {
                             if showCompleted {
                                 if !taskCellVM.task.completed {
-                                    taskCellView(taskCellVM: taskCellVM)
+                                    taskCellView(taskCellVM: taskCellVM, taskListVM: taskListVM)
                                 }
                             }
                             else
                             {
-                                taskCellView(taskCellVM: taskCellVM)
+                                taskCellView(taskCellVM: taskCellVM, taskListVM: taskListVM)
                             }
                         }
                     }
@@ -38,7 +38,7 @@ struct AllTasksListView: View {
                         .labelsHidden()
                     Text("incomplete?")
                     Spacer()
-                    NavigationLink(destination: AddNewTaskView(task: Task(title: "", completed: false), createNewTask: true)) {
+                    NavigationLink(destination: AddNewTaskView(task: CustomTask(title: "", completed: false), createNewTask: true)) {
                         HStack {
                             Image(systemName: "plus.circle.fill")
                                 .resizable()
@@ -52,19 +52,29 @@ struct AllTasksListView: View {
                 Divider()
             }
             .navigationTitle("All tasks")
-        }
-        
-    }
-    
-    fileprivate func taskCellView(taskCellVM: TaskCellViewModel) -> some View {
-        return TaskCell(taskCellVM: taskCellVM)
-            .swipeActions(allowsFullSwipe: false) {
-                Button(role: .destructive) {
-                    taskListVM.removeTask(task: taskCellVM.task)
-                } label: {
-                    Label("Delete", systemImage: "trash.fill")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        showSettings = true
+                    } label: {
+                        Image(systemName: "slider.horizontal.3")
+                    }
                 }
             }
+            .sheet(isPresented: $showSettings) {
+                VStack {
+                    HStack {
+                        Toggle("", isOn: $showCompleted)
+                            .labelsHidden()
+                        Text("show incomplete only?")
+                    }
+                    Button("Done") {
+                        showSettings = false
+                    }
+                }
+            }
+        }
+        
     }
     
     struct ContentView_Previews: PreviewProvider {
@@ -74,10 +84,33 @@ struct AllTasksListView: View {
     }
 }
 
+struct taskCellView: View {
+    @ObservedObject var taskCellVM: TaskCellViewModel
+    @ObservedObject var taskListVM: TaskListViewModel
+    var body: some View {
+        TaskCell(taskCellVM: taskCellVM)
+            .swipeActions(allowsFullSwipe: false) {
+                Button(role: .destructive) {
+                    taskListVM.removeTask(task: taskCellVM.task)
+                } label: {
+                    Label("Delete", systemImage: "trash.fill")
+                }
+            }
+            .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                Button {
+                    self.taskCellVM.task.completed.toggle()
+                } label: {
+                    Label("Complete task", systemImage: "checkmark")
+                }
+                .tint(.blue)
+            }
+    }
+}
+
 struct TaskCell: View {
     @ObservedObject var taskCellVM: TaskCellViewModel
     
-    var onCommit: (Task) -> (Void) = {_ in }
+    var onCommit: (CustomTask) -> (Void) = {_ in }
     
     var body: some View {
         HStack {
@@ -87,9 +120,6 @@ struct TaskCell: View {
                 .onTapGesture {
                     self.taskCellVM.task.completed.toggle()
                 }
-//            TextField("Enter a new task", text: $taskCellVM.task.title, onCommit: {
-//                self.onCommit(self.taskCellVM.task)
-//            })
             NavigationLink(destination: AddNewTaskView(task: taskCellVM.task, createNewTask: false)) {
                 Text(taskCellVM.task.title)
             }

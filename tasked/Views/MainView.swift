@@ -18,6 +18,10 @@ struct MainView: View {
                 .tabItem {
                     Label("My tasks", systemImage: "square.and.pencil")
                 }
+            ProfileView()
+                .tabItem {
+                    Label("Account", systemImage: "person")
+                }
         }
     }
 }

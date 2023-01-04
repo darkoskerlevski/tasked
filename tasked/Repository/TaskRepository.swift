@@ -13,7 +13,7 @@ class TaskRepository: ObservableObject {
     
     let db = Firestore.firestore()
     
-    @Published var tasks = [Task]()
+    @Published var tasks = [CustomTask]()
     
     init(){
         loadData()
@@ -24,14 +24,14 @@ class TaskRepository: ObservableObject {
             if let querySnapshot = querySnapshot {
                 DispatchQueue.main.async {
                     self.tasks = querySnapshot.documents.map { d in
-                        return Task(id: d.documentID, title: d["title"] as? String ?? "", completed: d["completed"] as? Bool ?? false)
+                        return CustomTask(id: d.documentID, title: d["title"] as? String ?? "", completed: d["completed"] as? Bool ?? false)
                     }
                 }
             }
         }
     }
     
-    func addTask(_ task: Task) {
+    func addTask(_ task: CustomTask) {
         do {
             let _ = try db.collection("tasks").addDocument(data: ["title" : task.title, "completed" : task.completed])
         }
@@ -40,7 +40,7 @@ class TaskRepository: ObservableObject {
         }
     }
     
-    func updateTask(_ task: Task) {
+    func updateTask(_ task: CustomTask) {
         do {
             try db.collection("tasks").document(task.id).setData(["title" : task.title, "completed" : task.completed])
         }
@@ -49,7 +49,7 @@ class TaskRepository: ObservableObject {
         }
     }
     
-    func removeTask(_ task: Task) {
+    func removeTask(_ task: CustomTask) {
         do {
             try db.collection("tasks").document(task.id).delete()
         }

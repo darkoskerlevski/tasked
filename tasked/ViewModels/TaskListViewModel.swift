@@ -24,18 +24,15 @@ class TaskListViewModel: ObservableObject {
         .store(in: &cancellables)
     }
     
-    func addTask(task: Task) {
+    func addTask(task: CustomTask) {
         taskRepository.addTask(task)
-//        let taskVM = TaskCellViewModel(task: task)
-//        self.taskCellViewModels.append(taskVM)
     }
     
-    func updateTask(task: Task) {
+    func updateTask(task: CustomTask) {
         taskRepository.updateTask(task)
-        print(task)
     }
     
-    func removeTask(task: Task) {
+    func removeTask(task: CustomTask) {
         taskRepository.removeTask(task)
     }
     

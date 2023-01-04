@@ -10,14 +10,14 @@ import Foundation
 
 class TaskCellViewModel: ObservableObject, Identifiable {
     @Published var taskRepository = TaskRepository()
-    @Published var task: Task
+    @Published var task: CustomTask
     
     var id = ""
     @Published var completionStateIconName = ""
     
     private var cancellables = Set<AnyCancellable>()
     
-    init(task: Task) {
+    init(task: CustomTask) {
         self.task = task
         
         $task
