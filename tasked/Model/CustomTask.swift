@@ -12,12 +12,3 @@ struct CustomTask: Codable, Identifiable{
     var title: String
     var completed: Bool
 }
-
-#if DEBUG
-let testDataTasks = [
-    CustomTask(title: "Implement the UI", completed: true),
-    CustomTask(title: "Connect to firebase", completed: false),
-    CustomTask(title: "????", completed: false),
-    CustomTask(title: "Profit!!!", completed: false)
-]
-#endif

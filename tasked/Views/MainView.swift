@@ -8,22 +8,38 @@
 import SwiftUI
 
 struct MainView: View {
+    @ObservedObject var userManager: UserManager = UserManager()
+    @State private var tabSelection = 1
+    
     var body: some View {
-        TabView {
-            AllTasksListView()
+        TabView(selection: $tabSelection) {
+            MyTasksListView(userManager: userManager)
                 .tabItem {
-                    Label("All tasks", systemImage: "list.dash")
+                    Label("My tasks", systemImage: "list.dash")
                 }
-            MyTasksListView()
+                .tag(1)
+            SharedTasksListView(userManager: userManager, tabSelection: $tabSelection)
                 .tabItem {
-                    Label("My tasks", systemImage: "square.and.pencil")
+                    Label("Shared tasks", systemImage: "square.and.pencil")
                 }
-            ProfileView()
+                .tag(2)
+            ProfileView(userManager: userManager)
                 .tabItem {
                     Label("Account", systemImage: "person")
                 }
+                .tag(3)
+        }
+        .onLoad {
+            userManager.auth.addStateDidChangeListener { auth, user in
+                if user != nil {
+                    userManager.isLoggedIn = true
+                    userManager.loadUserData()
+                    print(user!)
+                }
+            }
         }
     }
+    
 }
 
 struct MainView_Previews: PreviewProvider {

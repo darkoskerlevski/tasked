@@ -11,12 +11,13 @@ import PhotosUI
 struct SettingsView: View {
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var storageManager: StorageManager
-
+    @ObservedObject var userManager: UserManager
+    
     var body: some View {
         NavigationView {
             Form {
-                HeaderBackgroundSliders()
-                ProfileSettings(storageManager: storageManager)
+                HeaderBackgroundSliders(userManager: userManager)
+                ProfileSettings(storageManager: storageManager, userManager: userManager)
             }
             .navigationBarTitle(Text("Settings"))
             .navigationBarItems(
@@ -39,6 +40,8 @@ struct ProfileSettings: View {
     @State private var selectedItem: PhotosPickerItem? = nil
     @State private var selectedImageData: Data? = nil
     @ObservedObject var storageManager: StorageManager
+    @ObservedObject var userManager: UserManager
+    @State var didSomethingChange: Bool = false
     
     var body: some View {
         Section(header: Text("Profile")) {
@@ -50,13 +53,31 @@ struct ProfileSettings: View {
                     if let data = try? await newItem?.loadTransferable(type: Data.self) {
                         if let uiImage = UIImage(data: data) {
                             storageManager.upload(image: uiImage)
-                            storageManager.image = uiImage.scalePreservingAspectRatio(width: 200, height: 200)
+                            ProfileURLImage().imageLoader.loadImage()
                         }
                     }
                 }
             }
             TextField("Name", text: $name)
             TextField("Subtitle", text: $subtitle)
+        }
+        .onDisappear {
+            if userManager.userInfo!.name != name {
+                userManager.userInfo!.name = name
+                didSomethingChange = true
+            }
+            if userManager.userInfo!.title != subtitle {
+                userManager.userInfo!.title = subtitle
+                didSomethingChange = true
+            }
+            if didSomethingChange {
+                userManager.updateUserData(userInfo: userManager.userInfo!)
+                didSomethingChange = false
+            }
+        }
+        .onLoad {
+            name = userManager.name
+            subtitle = userManager.title
         }
     }
 }
@@ -65,6 +86,8 @@ struct HeaderBackgroundSliders: View {
     @AppStorage("rValue") var rValue = DefaultSettings.rValue
     @AppStorage("gValue") var gValue = DefaultSettings.gValue
     @AppStorage("bValue") var bValue = DefaultSettings.bValue
+    @ObservedObject var userManager: UserManager
+    @State var didSomethingChange: Bool = false
     
     var body: some View {
         Section(header: Text("Header Background Color")) {
@@ -80,6 +103,29 @@ struct HeaderBackgroundSliders: View {
                     colorSlider(value: $bValue, textColor: .blue)
                 }
             }
+        }
+        .onDisappear {
+            if userManager.userInfo!.r != rValue {
+                userManager.userInfo!.r = rValue
+                didSomethingChange = true
+            }
+            if userManager.userInfo!.g != gValue {
+                userManager.userInfo!.g = gValue
+                didSomethingChange = true
+            }
+            if userManager.userInfo!.b != bValue {
+                userManager.userInfo!.b = bValue
+                didSomethingChange = true
+            }
+            if didSomethingChange {
+                userManager.updateUserData(userInfo: userManager.userInfo!)
+                didSomethingChange = false
+            }
+        }
+        .onLoad {
+            rValue = userManager.r
+            gValue = userManager.g
+            bValue = userManager.b
         }
     }
 }
@@ -102,6 +148,6 @@ struct colorSlider: View {
 
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsView(storageManager: StorageManager())
+        SettingsView(storageManager: StorageManager(), userManager: UserManager())
     }
 }
