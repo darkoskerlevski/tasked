@@ -24,6 +24,12 @@ public class UserManager: ObservableObject {
     
     public var auth = Auth.auth()
     
+    init() {
+        let settings = FirestoreSettings()
+        settings.isPersistenceEnabled = true
+        db.settings = settings
+    }
+    
     func loadUserData() {
         db.collection("users").document(auth.currentUser!.uid).addSnapshotListener { documentSnapshot, error in
             if let documentSnapshot = documentSnapshot, documentSnapshot.exists {
@@ -33,8 +39,9 @@ public class UserManager: ObservableObject {
                 let r = documentData!["r"] as? Double ?? 0.0
                 let g = documentData!["g"] as? Double ?? 0.0
                 let b = documentData!["b"] as? Double ?? 0.0
+                let email = documentData!["email"] as? String ?? ""
                 let sharedTasks = documentData!["sharedTasks"] as? [String] ?? []
-                self.userInfo = UserInfo(name: name, title: subtitle, r: r, g: g, b: b, sharedTasks: sharedTasks)
+                self.userInfo = UserInfo(name: name, title: subtitle, email: email, r: r, g: g, b: b, sharedTasks: sharedTasks)
                 self.name = name
                 self.title = subtitle
                 self.r = r
@@ -48,6 +55,7 @@ public class UserManager: ObservableObject {
         self.db.collection("users").document(auth.currentUser!.uid).setData([
             "name" : userInfo.name,
             "title" : userInfo.title,
+            "email" : userInfo.email,
             "r" : userInfo.r,
             "g" : userInfo.g,
             "b" : userInfo.b,
@@ -70,7 +78,7 @@ public class UserManager: ObservableObject {
                 self.errorCreatingUser = true
             } else {
                 // SUCCESS
-                self.userInfo = UserInfo(name: name, title: title, r: 0, g: 0, b: 0, sharedTasks: [])
+                self.userInfo = UserInfo(name: name, title: title, email: email, r: 0, g: 0, b: 0, sharedTasks: [])
                 self.db.collection("users").document(user!.user.uid).setData([
                     "name" : self.userInfo?.name ?? "",
                     "title" : self.userInfo?.title ?? "",

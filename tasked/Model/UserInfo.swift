@@ -10,6 +10,7 @@ import Foundation
 struct UserInfo: Codable {
     var name: String
     var title: String
+    var email: String
     var r: Double
     var g: Double
     var b: Double

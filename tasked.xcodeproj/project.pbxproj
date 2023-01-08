@@ -22,6 +22,11 @@
 		C522DC792910441A00097296 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C522DC782910441A00097296 /* GoogleService-Info.plist */; };
 		C522DC83291084B600097296 /* TaskRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C522DC82291084B600097296 /* TaskRepository.swift */; };
 		C55F614A2940BCB4001825FA /* AddNewTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C55F61492940BCB4001825FA /* AddNewTaskView.swift */; };
+		C5A2B71D2968C0800066E78C /* AddNewSharedTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A2B71C2968C0800066E78C /* AddNewSharedTaskView.swift */; };
+		C5A2B71F2969DECC0066E78C /* TaskInviteRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A2B71E2969DECC0066E78C /* TaskInviteRepository.swift */; };
+		C5A2B7212969DEFB0066E78C /* CustomInvite.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A2B7202969DEFB0066E78C /* CustomInvite.swift */; };
+		C5A2B7232969E9D50066E78C /* InvitesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A2B7222969E9D50066E78C /* InvitesView.swift */; };
+		C5A2B725296B42380066E78C /* TaskMembersRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A2B724296B42370066E78C /* TaskMembersRepository.swift */; };
 		C5AECC232964C3150011E4F2 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5AECC222964C3150011E4F2 /* ProfileView.swift */; };
 		C5AECC262964C4660011E4F2 /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5AECC252964C4660011E4F2 /* UserSettings.swift */; };
 		C5AECC282964C49C0011E4F2 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5AECC272964C49C0011E4F2 /* SettingsView.swift */; };
@@ -81,6 +86,11 @@
 		C522DC782910441A00097296 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C522DC82291084B600097296 /* TaskRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRepository.swift; sourceTree = "<group>"; };
 		C55F61492940BCB4001825FA /* AddNewTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewTaskView.swift; sourceTree = "<group>"; };
+		C5A2B71C2968C0800066E78C /* AddNewSharedTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewSharedTaskView.swift; sourceTree = "<group>"; };
+		C5A2B71E2969DECC0066E78C /* TaskInviteRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskInviteRepository.swift; sourceTree = "<group>"; };
+		C5A2B7202969DEFB0066E78C /* CustomInvite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomInvite.swift; sourceTree = "<group>"; };
+		C5A2B7222969E9D50066E78C /* InvitesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvitesView.swift; sourceTree = "<group>"; };
+		C5A2B724296B42370066E78C /* TaskMembersRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskMembersRepository.swift; sourceTree = "<group>"; };
 		C5AECC222964C3150011E4F2 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		C5AECC252964C4660011E4F2 /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettings.swift; sourceTree = "<group>"; };
 		C5AECC272964C49C0011E4F2 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -195,6 +205,7 @@
 			children = (
 				C522DC6D291026E300097296 /* CustomTask.swift */,
 				C5AECDBC296642680011E4F2 /* UserInfo.swift */,
+				C5A2B7202969DEFB0066E78C /* CustomInvite.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -208,6 +219,8 @@
 				C5078BAB2948711C00BC6A1C /* MainView.swift */,
 				C5AECC222964C3150011E4F2 /* ProfileView.swift */,
 				C5AECC272964C49C0011E4F2 /* SettingsView.swift */,
+				C5A2B71C2968C0800066E78C /* AddNewSharedTaskView.swift */,
+				C5A2B7222969E9D50066E78C /* InvitesView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -230,6 +243,8 @@
 				C5AECC292964D5290011E4F2 /* StorageManager.swift */,
 				C5AECDB7296619980011E4F2 /* UserManager.swift */,
 				C5AECF632968AE9B0011E4F2 /* SharedTaskRepository.swift */,
+				C5A2B71E2969DECC0066E78C /* TaskInviteRepository.swift */,
+				C5A2B724296B42370066E78C /* TaskMembersRepository.swift */,
 			);
 			path = Repository;
 			sourceTree = "<group>";
@@ -392,6 +407,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C5AECC9D2964EC280011E4F2 /* ViewDidLoadModifier.swift in Sources */,
+				C5A2B7232969E9D50066E78C /* InvitesView.swift in Sources */,
 				C5078BAE2948767300BC6A1C /* SharedTasksListView.swift in Sources */,
 				C5AECF662968B3610011E4F2 /* SharedTaskListViewModel.swift in Sources */,
 				C522DC83291084B600097296 /* TaskRepository.swift in Sources */,
@@ -403,8 +419,10 @@
 				C522DC722910307D00097296 /* TaskCellViewModel.swift in Sources */,
 				C522DC742910331400097296 /* TaskListViewModel.swift in Sources */,
 				C522DC6E291026E300097296 /* CustomTask.swift in Sources */,
+				C5A2B725296B42380066E78C /* TaskMembersRepository.swift in Sources */,
 				C5AECF642968AE9B0011E4F2 /* SharedTaskRepository.swift in Sources */,
 				C51D5AB9290A9E4B00A6C2C1 /* taskedApp.swift in Sources */,
+				C5A2B71D2968C0800066E78C /* AddNewSharedTaskView.swift in Sources */,
 				C5AECF682968B39D0011E4F2 /* SharedTaskCellViewModel.swift in Sources */,
 				C5AECC9F29656DE50011E4F2 /* UIImage+Extension.swift in Sources */,
 				C5AECC282964C49C0011E4F2 /* SettingsView.swift in Sources */,
@@ -413,6 +431,8 @@
 				C5AECC262964C4660011E4F2 /* UserSettings.swift in Sources */,
 				C5AECF6029684BD70011E4F2 /* ProfileURLImage.swift in Sources */,
 				C5AECC2A2964D5290011E4F2 /* StorageManager.swift in Sources */,
+				C5A2B71F2969DECC0066E78C /* TaskInviteRepository.swift in Sources */,
+				C5A2B7212969DEFB0066E78C /* CustomInvite.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

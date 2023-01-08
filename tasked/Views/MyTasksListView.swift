@@ -23,12 +23,12 @@ struct MyTasksListView: View {
                         Group {
                             if showCompleted {
                                 if !taskCellVM.task.completed {
-                                    taskCellView(taskCellVM: taskCellVM, taskListVM: taskListVM)
+                                    taskCellView(taskCellVM: taskCellVM, taskListVM: taskListVM, userManager: userManager)
                                 }
                             }
                             else
                             {
-                                taskCellView(taskCellVM: taskCellVM, taskListVM: taskListVM)
+                                taskCellView(taskCellVM: taskCellVM, taskListVM: taskListVM, userManager: userManager)
                             }
                         }
                     }
@@ -38,7 +38,7 @@ struct MyTasksListView: View {
                         .labelsHidden()
                     Text("incomplete?")
                     Spacer()
-                    NavigationLink(destination: AddNewTaskView(task: CustomTask(title: "", completed: false), createNewTask: true)) {
+                    NavigationLink(destination: AddNewTaskView(task: CustomTask(title: "", completed: false, owner: userManager.getUserID(), taskMembers: [String]()), createNewTask: true, userManager: userManager)) {
                         HStack {
                             Image(systemName: "plus.circle.fill")
                                 .resizable()
@@ -87,8 +87,9 @@ struct MyTasksListView: View {
 struct taskCellView: View {
     @ObservedObject var taskCellVM: TaskCellViewModel
     @ObservedObject var taskListVM: TaskListViewModel
+    @ObservedObject var userManager: UserManager
     var body: some View {
-        TaskCell(taskCellVM: taskCellVM)
+        TaskCell(taskCellVM: taskCellVM, userManager: userManager)
             .swipeActions(allowsFullSwipe: false) {
                 Button(role: .destructive) {
                     taskListVM.removeTask(task: taskCellVM.task)
@@ -109,6 +110,7 @@ struct taskCellView: View {
 
 struct TaskCell: View {
     @ObservedObject var taskCellVM: TaskCellViewModel
+    @ObservedObject var userManager: UserManager
     
     var onCommit: (CustomTask) -> (Void) = {_ in }
     
@@ -120,7 +122,7 @@ struct TaskCell: View {
                 .onTapGesture {
                     self.taskCellVM.task.completed.toggle()
                 }
-            NavigationLink(destination: AddNewTaskView(task: taskCellVM.task, createNewTask: false)) {
+            NavigationLink(destination: AddNewTaskView(task: taskCellVM.task, createNewTask: false, userManager: userManager)) {
                 Text(taskCellVM.task.title)
             }
         }

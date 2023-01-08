@@ -16,6 +16,9 @@ class TaskRepository: ObservableObject {
     @Published var tasks = [CustomTask]()
     
     init(){
+        let settings = FirestoreSettings()
+        settings.isPersistenceEnabled = true
+        db.settings = settings
         loadData()
     }
     
@@ -24,7 +27,7 @@ class TaskRepository: ObservableObject {
             if let querySnapshot = querySnapshot {
                 DispatchQueue.main.async {
                     self.tasks = querySnapshot.documents.map { d in
-                        return CustomTask(id: d.documentID, title: d["title"] as? String ?? "", completed: d["completed"] as? Bool ?? false)
+                        return CustomTask(id: d.documentID, title: d["title"] as? String ?? "", completed: d["completed"] as? Bool ?? false, owner: d["owner"] as? String ?? "", taskMembers: d["taskMembers"] as? [String] ?? [])
                     }
                 }
             }

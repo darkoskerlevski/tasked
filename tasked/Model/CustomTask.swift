@@ -11,4 +11,6 @@ struct CustomTask: Codable, Identifiable{
     var id: String = UUID().uuidString
     var title: String
     var completed: Bool
+    var owner: String
+    var taskMembers: [String]
 }

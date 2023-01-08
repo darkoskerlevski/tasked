@@ -23,12 +23,12 @@ struct SharedTasksListView: View {
                             Group {
                                 if showCompleted {
                                     if !taskCellVM.task.completed {
-                                        sharedTaskCellView(taskCellVM: taskCellVM, taskListVM: taskListVM)
+                                        sharedTaskCellView(taskCellVM: taskCellVM, taskListVM: taskListVM, userManager: userManager)
                                     }
                                 }
                                 else
                                 {
-                                    sharedTaskCellView(taskCellVM: taskCellVM, taskListVM: taskListVM)
+                                    sharedTaskCellView(taskCellVM: taskCellVM, taskListVM: taskListVM, userManager: userManager)
                                 }
                             }
                         }
@@ -38,7 +38,7 @@ struct SharedTasksListView: View {
                             .labelsHidden()
                         Text("incomplete?")
                         Spacer()
-                        NavigationLink(destination: AddNewTaskView(task: CustomTask(title: "", completed: false), createNewTask: true)) {
+                        NavigationLink(destination: AddNewSharedTaskView(task: CustomTask(title: "", completed: false, owner: userManager.getUserID(), taskMembers: [String]()), createNewTask: true, userManager: userManager)) {
                             HStack {
                                 Image(systemName: "plus.circle.fill")
                                     .resizable()
@@ -51,12 +51,13 @@ struct SharedTasksListView: View {
                     .padding([.leading, .trailing])
                     Divider()
                 }
-                .onLoad {
-                    self.taskListVM.taskRepository.loadDataShared(taskList: userManager.userInfo!.sharedTasks)
-                    print(userManager.userInfo!)
-                }
                 .navigationTitle("Shared tasks")
                 .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        NavigationLink(destination: InvitesView(userManager: userManager)) {
+                            Image(systemName: "envelope.fill")
+                        }
+                    }
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button {
                             showSettings = true
@@ -102,8 +103,9 @@ struct SharedTasksListView: View {
 struct sharedTaskCellView: View {
     @ObservedObject var taskCellVM: SharedTaskCellViewModel
     @ObservedObject var taskListVM: SharedTaskListViewModel
+    @ObservedObject var userManager: UserManager
     var body: some View {
-        SharedTaskCell(taskCellVM: taskCellVM)
+        SharedTaskCell(taskCellVM: taskCellVM, userManager: userManager)
             .swipeActions(allowsFullSwipe: false) {
                 Button(role: .destructive) {
                     taskListVM.removeTask(task: taskCellVM.task)
@@ -124,6 +126,7 @@ struct sharedTaskCellView: View {
 
 struct SharedTaskCell: View {
     @ObservedObject var taskCellVM: SharedTaskCellViewModel
+    @ObservedObject var userManager: UserManager
     
     var onCommit: (CustomTask) -> (Void) = {_ in }
     
@@ -135,7 +138,7 @@ struct SharedTaskCell: View {
                 .onTapGesture {
                     self.taskCellVM.task.completed.toggle()
                 }
-            NavigationLink(destination: AddNewTaskView(task: taskCellVM.task, createNewTask: false)) {
+            NavigationLink(destination: AddNewSharedTaskView(task: taskCellVM.task, createNewTask: false, userManager: userManager)) {
                 Text(taskCellVM.task.title)
             }
         }
