@@ -30,6 +30,10 @@ struct AddNewSharedTaskView: View {
         taskMembersRepository.loadTaskMembers(task: task)
     }
     
+    var isSendInviteButtonDisabled: Bool {
+        inviteMember.contains("@") && inviteMember.contains(".")
+    }
+    
     var body: some View {
         VStack {
             if createNewTask {
@@ -43,14 +47,17 @@ struct AddNewSharedTaskView: View {
             Toggle(isOn: $taskCompletion) {
                 Text("Completed?")
             }
-            HStack {
-                TextField("Add members to task by email", text: $inviteMember)
-                    .keyboardType(.emailAddress)
-                Button {
-                    taskInviteRepository.addInvite(CustomInvite(forTaskID: task.id, forTaskTitle: task.title, forUserEmail: inviteMember, fromEmail: userManager.auth.currentUser!.email!, fromName: userManager.userInfo!.name))
-                    inviteMember = ""
-                } label: {
-                    Text("Send invite")
+            if !createNewTask {
+                HStack {
+                    TextField("Add members to task by email", text: $inviteMember)
+                        .keyboardType(.emailAddress)
+                    Button {
+                        taskInviteRepository.addInvite(CustomInvite(forTaskID: task.id, forTaskTitle: task.title, forUserEmail: inviteMember, fromEmail: userManager.auth.currentUser!.email!, fromName: userManager.userInfo!.name))
+                        inviteMember = ""
+                    } label: {
+                        Text("Send invite")
+                    }
+                    .disabled(!isSendInviteButtonDisabled)
                 }
             }
             Spacer()
@@ -58,7 +65,11 @@ struct AddNewSharedTaskView: View {
                 Button(action: {
                     if !taskName.isEmpty {
                         if createNewTask {
-                            taskListVM.addTask(task: CustomTask(title: taskName, completed: taskCompletion, owner: userManager.auth.currentUser?.uid ?? "", taskMembers: [userManager.getUserID()]))
+                            task.title = taskName
+                            task.completed = taskCompletion
+                            task.owner = userManager.getUserID()
+                            task.taskMembers = [userManager.getUserID()]
+                            taskListVM.addTask(task: task)
                         }
                         else {
                             task.title = taskName
@@ -73,7 +84,12 @@ struct AddNewSharedTaskView: View {
                         showingAlert = true
                     }
                 }) {
-                    Text("Add")
+                    if createNewTask {
+                        Text("Add")
+                    }
+                    else {
+                        Text("Save")
+                    }
                 }
                 .padding(.trailing, 40)
                 Button(action: {
@@ -83,13 +99,26 @@ struct AddNewSharedTaskView: View {
                 }
             }
             .padding(.top, 20)
+            Text("Members of this task:")
+                .font(.title2)
+                .padding(.top, 16)
             List {
                 ForEach(taskMembersRepository.members, id: \.self) { member in
                     VStack {
-                        Text("Name: " + member)
+                        Text("Email: " + member.email)
+                    }
+                    .swipeActions(edge: .trailing) {
+                        if task.owner == userManager.getUserID() {
+                            Button(role: .destructive) {
+                                taskListVM.taskRepository.removeTaskMember(task, memberID: taskMembersRepository.memberIDPairs[member]!)
+                            } label: {
+                                Label("Delete", systemImage: "trash.fill")
+                            }
+                        }
                     }
                 }
             }
+            .listStyle(.insetGrouped)
         }
         .padding(.all, 30)
         .toast(isPresenting: $showingAlert) {

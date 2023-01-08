@@ -54,7 +54,7 @@ struct SharedTasksListView: View {
                 .navigationTitle("Shared tasks")
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        NavigationLink(destination: InvitesView(userManager: userManager)) {
+                        NavigationLink(destination: InvitesView(userManager: userManager, sharedTaskRepository: taskListVM.taskRepository)) {
                             Image(systemName: "envelope.fill")
                         }
                     }

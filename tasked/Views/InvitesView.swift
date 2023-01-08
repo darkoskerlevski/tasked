@@ -10,6 +10,7 @@ import SwiftUI
 struct InvitesView: View {
     @ObservedObject var userManager: UserManager
     @ObservedObject var taskInviteRepository = TaskInviteRepository()
+    @ObservedObject var sharedTaskRepository: SharedTaskRepository
     
     var body: some View {
         NavigationView {
@@ -25,7 +26,7 @@ struct InvitesView: View {
                                 Spacer()
                             }
                             HStack {
-                                Text("From: " + invite.fromName)
+                                Text("From: " + invite.fromEmail)
                                 Spacer()
                             }
                         }
@@ -37,6 +38,7 @@ struct InvitesView: View {
                                 userManager.updateUserData(userInfo: userManager.userInfo!)
                             }
                             taskInviteRepository.removeInvite(invite)
+                            sharedTaskRepository.addUserToTask(taskID: invite.forTaskID, userID: userManager.getUserID())
                         } label: {
                             Label("Accept invite", systemImage: "checkmark")
                         }
@@ -63,6 +65,6 @@ struct InvitesView: View {
 
 struct InvitesView_Previews: PreviewProvider {
     static var previews: some View {
-        InvitesView(userManager: UserManager())
+        InvitesView(userManager: UserManager(), sharedTaskRepository: SharedTaskRepository())
     }
 }

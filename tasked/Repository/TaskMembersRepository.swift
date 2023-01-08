@@ -14,7 +14,8 @@ class TaskMembersRepository: ObservableObject {
     
     public var auth = Auth.auth()
     
-    public var members = [String]()
+    public var members = [UserInfo]()
+    public var memberIDPairs: [UserInfo:String] = [UserInfo:String]()
     
     init() {
         let settings = FirestoreSettings()
@@ -23,12 +24,22 @@ class TaskMembersRepository: ObservableObject {
     }
     
     func loadTaskMembers(task: CustomTask) {
-        self.db.collection("users").whereField("sharedTasks", arrayContains: task.id).addSnapshotListener { querySnapshot, error in
-            guard let documents = querySnapshot?.documents else {
-                print("Error fetching documents: \(error!)")
-                return
+        for member in task.taskMembers {
+            self.db.collection("users").document(member).addSnapshotListener { document, error in
+                if let document = document, document.exists {
+                    let documentData = document.data()
+                    let name = documentData!["name"] as? String ?? ""
+                    let subtitle = documentData!["title"] as? String ?? ""
+                    let r = documentData!["r"] as? Double ?? 0.0
+                    let g = documentData!["g"] as? Double ?? 0.0
+                    let b = documentData!["b"] as? Double ?? 0.0
+                    let email = documentData!["email"] as? String ?? ""
+                    let sharedTasks = documentData!["sharedTasks"] as? [String] ?? []
+                    let userInfo = UserInfo(name: name, title: subtitle, email: email, r: r, g: g, b: b, sharedTasks: sharedTasks)
+                    self.members.append(userInfo)
+                    self.memberIDPairs[userInfo] = document.documentID
+                }
             }
-            self.members = documents.map { $0["email"]! as! String }
         }
     }
 }

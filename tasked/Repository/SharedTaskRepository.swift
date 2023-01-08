@@ -27,18 +27,22 @@ class SharedTaskRepository: ObservableObject {
         db.settings = settings
         loadDataShared()
     }
-//
-//    func loadData() {
-//        db.collection("sharedTasks").addSnapshotListener { (querySnapshot, error) in
-//            if let querySnapshot = querySnapshot {
-//                DispatchQueue.main.async {
-//                    self.tasks = querySnapshot.documents.map { d in
-//                        return CustomTask(id: d.documentID, title: d["title"] as? String ?? "", completed: d["completed"] as? Bool ?? false)
-//                    }
-//                }
-//            }
-//        }
-//    }
+    
+    func addUserToTask(taskID: String, userID: String) {
+        self.db.collection("sharedTasks").document(taskID).getDocument { querySnapshot, error in
+            if let querySnapshot = querySnapshot, querySnapshot.exists {
+                let data = querySnapshot.data()
+                let id = querySnapshot.documentID
+                let title = data?["title"] as? String ?? ""
+                let completed = data?["completed"] as? Bool ?? false
+                let owner = data?["owner"] as? String ?? ""
+                var taskMembers = data?["taskMembers"] as? [String] ?? []
+                taskMembers.append(userID)
+                var task = CustomTask(id: id, title: title, completed: completed, owner: owner, taskMembers: taskMembers)
+                self.updateTask(task)
+            }
+        }
+    }
     
     func loadDataShared() {
         db.collection("users").document(auth.currentUser?.uid ?? "nil").addSnapshotListener { documentSnapshot, error in
@@ -71,7 +75,8 @@ class SharedTaskRepository: ObservableObject {
     
     func addTask(_ task: CustomTask) {
         do {
-            let _ = try db.collection("sharedTasks").addDocument(data: ["title" : task.title, "completed" : task.completed, "owner" : auth.currentUser!.uid, "taskMembers" : task.taskMembers])
+//            let _ = try db.collection("sharedTasks").addDocument(data: ["title" : task.title, "completed" : task.completed, "owner" : auth.currentUser!.uid, "taskMembers" : task.taskMembers])
+            let _ = try db.collection("sharedTasks").document(task.id).setData(["title" : task.title, "completed" : task.completed, "owner" : auth.currentUser!.uid, "taskMembers" : task.taskMembers])
         }
         catch {
             fatalError("Unable to encode task: \(error.localizedDescription)")
@@ -80,7 +85,7 @@ class SharedTaskRepository: ObservableObject {
     
     func updateTask(_ task: CustomTask) {
         do {
-            try db.collection("sharedTasks").document(task.id).setData(["title" : task.title, "completed" : task.completed, "taskMembers" : task.taskMembers])
+            try db.collection("sharedTasks").document(task.id).setData(["title" : task.title, "completed" : task.completed, "owner" : task.owner, "taskMembers" : task.taskMembers])
         }
         catch {
             fatalError("Unable to encode task: \(error.localizedDescription)")
@@ -90,7 +95,23 @@ class SharedTaskRepository: ObservableObject {
     func removeTask(_ task: CustomTask) {
         do {
             try db.collection("sharedTasks").document(task.id).delete()
-            db.collection("users").document(auth.currentUser!.uid).updateData([
+            for member in task.taskMembers {
+                db.collection("users").document(member).updateData([
+                    "sharedTasks" : FieldValue.arrayRemove([task.id])
+                ])
+            }
+        }
+        catch {
+            fatalError("Unable to encode task: \(error.localizedDescription)")
+        }
+    }
+    
+    func removeTaskMember(_ task: CustomTask, memberID: String) {
+        do {
+            try db.collection("sharedTasks").document(task.id).updateData([
+                "taskMembers" : FieldValue.arrayRemove([memberID])
+            ])
+            db.collection("users").document(memberID).updateData([
                 "sharedTasks" : FieldValue.arrayRemove([task.id])
             ])
         }
