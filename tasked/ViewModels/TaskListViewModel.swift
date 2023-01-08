@@ -11,6 +11,7 @@ import Combine
 class TaskListViewModel: ObservableObject {
     @Published var taskRepository = TaskRepository()
     @Published var taskCellViewModels = [TaskCellViewModel]()
+    @Published var deletedTaskCellViewModels = [TaskCellViewModel]()
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -21,6 +22,14 @@ class TaskListViewModel: ObservableObject {
             }
         }
         .assign(to: \.taskCellViewModels, on: self)
+        .store(in: &cancellables)
+        
+        taskRepository.$deletedTasks.map { tasks in
+            tasks.map { task in
+                TaskCellViewModel(task: task)
+            }
+        }
+        .assign(to: \.deletedTaskCellViewModels, on:self)
         .store(in: &cancellables)
     }
     
@@ -34,6 +43,10 @@ class TaskListViewModel: ObservableObject {
     
     func removeTask(task: CustomTask) {
         taskRepository.removeTask(task)
+    }
+    
+    func restoreTask(task: CustomTask) {
+        taskRepository.restoreTask(task)
     }
     
 }

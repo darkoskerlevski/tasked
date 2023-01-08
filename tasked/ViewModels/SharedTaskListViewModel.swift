@@ -36,4 +36,8 @@ class SharedTaskListViewModel: ObservableObject {
         taskRepository.removeTask(task)
     }
     
+    func removeTaskMember(task: CustomTask, memberID: String) {
+        taskRepository.removeTaskMember(task, memberID: memberID)
+    }
+    
 }

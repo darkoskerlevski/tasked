@@ -99,16 +99,18 @@ struct AddNewSharedTaskView: View {
                 }
             }
             .padding(.top, 20)
-            Text("Members of this task:")
-                .font(.title2)
-                .padding(.top, 16)
+            if createNewTask {
+                Text("Members of this task:")
+                    .font(.title2)
+                    .padding(.top, 16)
+            }
             List {
                 ForEach(taskMembersRepository.members, id: \.self) { member in
                     VStack {
                         Text("Email: " + member.email)
                     }
                     .swipeActions(edge: .trailing) {
-                        if task.owner == userManager.getUserID() {
+                        if task.owner == userManager.getUserID() && taskMembersRepository.memberIDPairs[member] != task.owner{
                             Button(role: .destructive) {
                                 taskListVM.taskRepository.removeTaskMember(task, memberID: taskMembersRepository.memberIDPairs[member]!)
                             } label: {

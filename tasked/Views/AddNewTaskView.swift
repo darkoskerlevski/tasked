@@ -43,7 +43,7 @@ struct AddNewTaskView: View {
                 Button(action: {
                     if !taskName.isEmpty {
                         if createNewTask {
-                            taskListVM.addTask(task: CustomTask(title: taskName, completed: taskCompletion, owner: userManager.getUserID(), taskMembers: [userManager.getUserID()]))
+                            taskListVM.addTask(task: CustomTask(title: taskName, completed: taskCompletion, deleted: false, owner: userManager.getUserID(), taskMembers: [userManager.getUserID()]))
                         }
                         else {
                             task.title = taskName

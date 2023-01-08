@@ -11,7 +11,7 @@ struct MyTasksListView: View {
     
     @ObservedObject var userManager: UserManager
     @ObservedObject var taskListVM = TaskListViewModel()
-    @State var showSettings: Bool = false
+    @State var showDeleted: Bool = false
     @State var showCompleted: Bool = false
     
     
@@ -38,7 +38,7 @@ struct MyTasksListView: View {
                         .labelsHidden()
                     Text("incomplete?")
                     Spacer()
-                    NavigationLink(destination: AddNewTaskView(task: CustomTask(title: "", completed: false, owner: userManager.getUserID(), taskMembers: [String]()), createNewTask: true, userManager: userManager)) {
+                    NavigationLink(destination: AddNewTaskView(task: CustomTask(title: "", completed: false, deleted: false, owner: userManager.getUserID(), taskMembers: [String]()), createNewTask: true, userManager: userManager)) {
                         HStack {
                             Image(systemName: "plus.circle.fill")
                                 .resizable()
@@ -55,21 +55,23 @@ struct MyTasksListView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
-                        showSettings = true
+                        showDeleted = true
                     } label: {
-                        Image(systemName: "slider.horizontal.3")
+                        Image(systemName: "trash.fill")
                     }
                 }
             }
-            .sheet(isPresented: $showSettings) {
+            .sheet(isPresented: $showDeleted) {
                 VStack {
-                    HStack {
-                        Toggle("", isOn: $showCompleted)
-                            .labelsHidden()
-                        Text("show incomplete only?")
+                    List {
+                        ForEach(taskListVM.deletedTaskCellViewModels) { taskCellVM in
+                            Group {
+                                taskCellView(taskCellVM: taskCellVM, taskListVM: taskListVM, userManager: userManager)
+                            }
+                        }
                     }
                     Button("Done") {
-                        showSettings = false
+                        showDeleted = false
                     }
                 }
             }

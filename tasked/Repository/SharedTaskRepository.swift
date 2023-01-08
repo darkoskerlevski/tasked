@@ -35,10 +35,11 @@ class SharedTaskRepository: ObservableObject {
                 let id = querySnapshot.documentID
                 let title = data?["title"] as? String ?? ""
                 let completed = data?["completed"] as? Bool ?? false
+                let deleted = data?["deleted"] as? Bool ?? false
                 let owner = data?["owner"] as? String ?? ""
                 var taskMembers = data?["taskMembers"] as? [String] ?? []
                 taskMembers.append(userID)
-                var task = CustomTask(id: id, title: title, completed: completed, owner: owner, taskMembers: taskMembers)
+                var task = CustomTask(id: id, title: title, completed: completed, deleted: deleted, owner: owner, taskMembers: taskMembers)
                 self.updateTask(task)
             }
         }
@@ -56,7 +57,7 @@ class SharedTaskRepository: ObservableObject {
                                 sharedTasks.contains(d.documentID)
                             }
                             self.tasks = availableTasks.map { d in
-                                return CustomTask(id: d.documentID, title: d["title"] as? String ?? "", completed: d["completed"] as? Bool ?? false, owner: d["owner"] as? String ?? "", taskMembers: d["taskMembers"] as? [String] ?? [])
+                                return CustomTask(id: d.documentID, title: d["title"] as? String ?? "", completed: d["completed"] as? Bool ?? false, deleted: d["deleted"] as? Bool ?? false, owner: d["owner"] as? String ?? "", taskMembers: d["taskMembers"] as? [String] ?? [])
                             }
                             print("sharedTasks = ", sharedTasks)
                             print("retreived tasks = ", self.tasks)

@@ -38,7 +38,7 @@ struct SharedTasksListView: View {
                             .labelsHidden()
                         Text("incomplete?")
                         Spacer()
-                        NavigationLink(destination: AddNewSharedTaskView(task: CustomTask(title: "", completed: false, owner: userManager.getUserID(), taskMembers: [String]()), createNewTask: true, userManager: userManager)) {
+                        NavigationLink(destination: AddNewSharedTaskView(task: CustomTask(title: "", completed: false, deleted: false, owner: userManager.getUserID(), taskMembers: [String]()), createNewTask: true, userManager: userManager)) {
                             HStack {
                                 Image(systemName: "plus.circle.fill")
                                     .resizable()
@@ -108,7 +108,11 @@ struct sharedTaskCellView: View {
         SharedTaskCell(taskCellVM: taskCellVM, userManager: userManager)
             .swipeActions(allowsFullSwipe: false) {
                 Button(role: .destructive) {
-                    taskListVM.removeTask(task: taskCellVM.task)
+                    if taskCellVM.task.owner == userManager.getUserID() {
+                        taskListVM.removeTask(task: taskCellVM.task)
+                    } else {
+                        taskListVM.removeTaskMember(task: taskCellVM.task, memberID: userManager.getUserID())
+                    }
                 } label: {
                     Label("Delete", systemImage: "trash.fill")
                 }
