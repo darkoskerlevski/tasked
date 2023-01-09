@@ -11,7 +11,7 @@ struct SharedTasksListView: View {
     @ObservedObject var userManager: UserManager
     @ObservedObject var taskListVM = SharedTaskListViewModel()
     @Binding var tabSelection: Int
-    @State var showSettings: Bool = false
+    @State var showDeleted: Bool = false
     @State var showCompleted: Bool = false
     
     var body: some View {
@@ -60,23 +60,38 @@ struct SharedTasksListView: View {
                     }
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button {
-                            showSettings = true
+                            showDeleted = true
                         } label: {
-                            Image(systemName: "slider.horizontal.3")
+                            Image(systemName: "trash.fill")
                         }
                     }
                 }
-                .sheet(isPresented: $showSettings) {
-                    VStack {
-                        HStack {
-                            Toggle("", isOn: $showCompleted)
-                                .labelsHidden()
-                            Text("show incomplete only?")
+                .sheet(isPresented: $showDeleted) {
+                    NavigationView {
+                        VStack {
+                            List {
+                                ForEach(taskListVM.deletedTaskCellViewModels) { taskCellVM in
+                                    Group {
+                                        sharedTaskCellView(taskCellVM: taskCellVM, taskListVM: taskListVM, userManager: userManager)
+                                    }
+                                }
+                            }
+                            Spacer()
+                            Divider()
+                            Text("tip: swipe from left to restore, from right to permanently delete")
+                                .font(.footnote.smallCaps())
+                                .padding()
                         }
-                        Button("Done") {
-                            showSettings = false
+                        .navigationTitle("Deleted tasks")
+                        .toolbar {
+                            ToolbarItem(placement: .navigationBarTrailing) {
+                                Button("Done") {
+                                    showDeleted = false
+                                }
+                            }
                         }
                     }
+                    .navigationViewStyle(StackNavigationViewStyle())
                 }
             } else {
                 VStack {
@@ -119,7 +134,11 @@ struct sharedTaskCellView: View {
             }
             .swipeActions(edge: .leading, allowsFullSwipe: true) {
                 Button {
-                    self.taskCellVM.task.completed.toggle()
+                    if self.taskCellVM.task.deleted {
+                        taskListVM.restoreTask(task: taskCellVM.task)
+                    } else {
+                        self.taskCellVM.task.completed.toggle()
+                    }
                 } label: {
                     Label("Complete task", systemImage: "checkmark")
                 }

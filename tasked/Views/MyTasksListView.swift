@@ -33,6 +33,7 @@ struct MyTasksListView: View {
                         }
                     }
                 }
+                .id(UUID())
                 HStack {
                     Toggle("", isOn: $showCompleted)
                         .labelsHidden()
@@ -62,18 +63,31 @@ struct MyTasksListView: View {
                 }
             }
             .sheet(isPresented: $showDeleted) {
-                VStack {
-                    List {
-                        ForEach(taskListVM.deletedTaskCellViewModels) { taskCellVM in
-                            Group {
-                                taskCellView(taskCellVM: taskCellVM, taskListVM: taskListVM, userManager: userManager)
+                NavigationView {
+                    VStack {
+                        List {
+                            ForEach(taskListVM.deletedTaskCellViewModels) { taskCellVM in
+                                Group {
+                                    taskCellView(taskCellVM: taskCellVM, taskListVM: taskListVM, userManager: userManager)
+                                }
+                            }
+                        }
+                        Spacer()
+                        Divider()
+                        Text("tip: swipe from left to restore, from right to permanently delete")
+                            .font(.footnote.smallCaps())
+                            .padding()
+                    }
+                    .navigationTitle("Deleted tasks")
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button("Done") {
+                                showDeleted = false
                             }
                         }
                     }
-                    Button("Done") {
-                        showDeleted = false
-                    }
                 }
+                .navigationViewStyle(StackNavigationViewStyle())
             }
         }
         
@@ -101,7 +115,11 @@ struct taskCellView: View {
             }
             .swipeActions(edge: .leading, allowsFullSwipe: true) {
                 Button {
-                    self.taskCellVM.task.completed.toggle()
+                    if self.taskCellVM.task.deleted {
+                        taskListVM.restoreTask(task: taskCellVM.task)
+                    } else {
+                        self.taskCellVM.task.completed.toggle()
+                    }
                 } label: {
                     Label("Complete task", systemImage: "checkmark")
                 }

@@ -24,20 +24,16 @@ class TaskRepository: ObservableObject {
     }
     
     func loadData() {
-        db.collection("tasks").addSnapshotListener { (querySnapshot, error) in
-            if let querySnapshot = querySnapshot {
-                DispatchQueue.main.async {
-                    for d in querySnapshot.documents {
-                        let task = CustomTask(id: d.documentID, title: d["title"] as? String ?? "", completed: d["completed"] as? Bool ?? false, deleted: d["deleted"] as? Bool ?? false, owner: d["owner"] as? String ?? "", taskMembers: d["taskMembers"] as? [String] ?? [])
-                        if task.deleted {
-                            self.deletedTasks.append(task)
-                        } else {
-                            self.tasks.append(task)
+        DispatchQueue.global(qos: .background).async {
+            self.db.collection("tasks").addSnapshotListener { (querySnapshot, error) in
+                if let querySnapshot = querySnapshot {
+                    DispatchQueue.main.async {
+                        let allTasks = querySnapshot.documents.map { d in
+                            return CustomTask(id: d.documentID, title: d["title"] as? String ?? "", completed: d["completed"] as? Bool ?? false, deleted: d["deleted"] as? Bool ?? false, owner: d["owner"] as? String ?? "", taskMembers: d["taskMembers"] as? [String] ?? [])
                         }
+                        self.tasks = allTasks.filter { $0.deleted == false }
+                        self.deletedTasks = allTasks.filter { $0.deleted == true }
                     }
-//                    self.tasks = querySnapshot.documents.map { d in
-//                        return CustomTask(id: d.documentID, title: d["title"] as? String ?? "", completed: d["completed"] as? Bool ?? false, deleted: d["deleted"] as? Bool ?? false, owner: d["owner"] as? String ?? "", taskMembers: d["taskMembers"] as? [String] ?? [])
-//                    }
                 }
             }
         }

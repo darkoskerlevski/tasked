@@ -19,6 +19,7 @@ class SharedTaskRepository: ObservableObject {
     
     
     @Published var tasks = [CustomTask]()
+    @Published var deletedTasks = [CustomTask]()
     
     
     init(){
@@ -56,28 +57,24 @@ class SharedTaskRepository: ObservableObject {
                             let availableTasks = querySnapshot.documents.filter { d in
                                 sharedTasks.contains(d.documentID)
                             }
-                            self.tasks = availableTasks.map { d in
+                            let allTasks = availableTasks.map { d in
                                 return CustomTask(id: d.documentID, title: d["title"] as? String ?? "", completed: d["completed"] as? Bool ?? false, deleted: d["deleted"] as? Bool ?? false, owner: d["owner"] as? String ?? "", taskMembers: d["taskMembers"] as? [String] ?? [])
                             }
-                            print("sharedTasks = ", sharedTasks)
-                            print("retreived tasks = ", self.tasks)
+                            self.tasks = allTasks.filter { $0.deleted == false }
+                            self.deletedTasks = allTasks.filter { $0.deleted == true }
                         }
                     }
                     
+                }
             }
-        }
-        
-//            print(self.tasks)
-//            print(taskList)
         }
     }
     
-
+    
     
     func addTask(_ task: CustomTask) {
         do {
-//            let _ = try db.collection("sharedTasks").addDocument(data: ["title" : task.title, "completed" : task.completed, "owner" : auth.currentUser!.uid, "taskMembers" : task.taskMembers])
-            let _ = try db.collection("sharedTasks").document(task.id).setData(["title" : task.title, "completed" : task.completed, "owner" : auth.currentUser!.uid, "taskMembers" : task.taskMembers])
+            let _ = try db.collection("sharedTasks").document(task.id).setData(["title" : task.title, "completed" : task.completed, "owner" : auth.currentUser!.uid, "taskMembers" : task.taskMembers, "deleted" : task.deleted])
         }
         catch {
             fatalError("Unable to encode task: \(error.localizedDescription)")
@@ -86,7 +83,7 @@ class SharedTaskRepository: ObservableObject {
     
     func updateTask(_ task: CustomTask) {
         do {
-            try db.collection("sharedTasks").document(task.id).setData(["title" : task.title, "completed" : task.completed, "owner" : task.owner, "taskMembers" : task.taskMembers])
+            try db.collection("sharedTasks").document(task.id).setData(["title" : task.title, "completed" : task.completed, "owner" : task.owner, "taskMembers" : task.taskMembers, "deleted" : task.deleted])
         }
         catch {
             fatalError("Unable to encode task: \(error.localizedDescription)")
@@ -94,16 +91,25 @@ class SharedTaskRepository: ObservableObject {
     }
     
     func removeTask(_ task: CustomTask) {
-        do {
-            try db.collection("sharedTasks").document(task.id).delete()
-            for member in task.taskMembers {
-                db.collection("users").document(member).updateData([
-                    "sharedTasks" : FieldValue.arrayRemove([task.id])
-                ])
+        if task.deleted {
+            do {
+                try db.collection("sharedTasks").document(task.id).delete()
+                for member in task.taskMembers {
+                    db.collection("users").document(member).updateData([
+                        "sharedTasks" : FieldValue.arrayRemove([task.id])
+                    ])
+                }
             }
-        }
-        catch {
-            fatalError("Unable to encode task: \(error.localizedDescription)")
+            catch {
+                fatalError("Unable to encode task: \(error.localizedDescription)")
+            }
+        } else {
+            do {
+                try db.collection("sharedTasks").document(task.id).setData(["title" : task.title, "completed" : task.completed, "owner" : task.owner, "taskMembers" : task.taskMembers, "deleted" : true])
+            }
+            catch {
+                fatalError("Unable to encode task: \(error.localizedDescription)")
+            }
         }
     }
     
@@ -115,6 +121,15 @@ class SharedTaskRepository: ObservableObject {
             db.collection("users").document(memberID).updateData([
                 "sharedTasks" : FieldValue.arrayRemove([task.id])
             ])
+        }
+        catch {
+            fatalError("Unable to encode task: \(error.localizedDescription)")
+        }
+    }
+    
+    func restoreTask(_ task: CustomTask) {
+        do {
+            try db.collection("sharedTasks").document(task.id).setData(["title" : task.title, "completed" : task.completed, "owner": task.owner, "taskMembers" : task.taskMembers, "deleted" : false])
         }
         catch {
             fatalError("Unable to encode task: \(error.localizedDescription)")

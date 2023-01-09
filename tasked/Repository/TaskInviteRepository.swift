@@ -34,7 +34,6 @@ class TaskInviteRepository: ObservableObject {
                     self.invites = invitesForUser.map { d in
                         return CustomInvite(id: d.documentID, forTaskID: d["forTaskID"] as? String ?? "", forTaskTitle: d["forTaskTitle"] as? String ?? "", forUserEmail: d["forUserEmail"] as? String ?? "", fromEmail: d["fromEmail"] as? String ?? "", fromName: d["fromName"] as? String ?? "")
                     }
-                    print(self.invites)
                 }
             }
         }
