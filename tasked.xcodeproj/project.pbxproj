@@ -48,6 +48,9 @@
 		C5AECF642968AE9B0011E4F2 /* SharedTaskRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5AECF632968AE9B0011E4F2 /* SharedTaskRepository.swift */; };
 		C5AECF662968B3610011E4F2 /* SharedTaskListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5AECF652968B3610011E4F2 /* SharedTaskListViewModel.swift */; };
 		C5AECF682968B39D0011E4F2 /* SharedTaskCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5AECF672968B39D0011E4F2 /* SharedTaskCellViewModel.swift */; };
+		C5CCE02E296F5B6F0063A4D8 /* OfflineTasksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5CCE02D296F5B6F0063A4D8 /* OfflineTasksView.swift */; };
+		C5CCE030296F5CA60063A4D8 /* AddNewOfflineTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5CCE02F296F5CA60063A4D8 /* AddNewOfflineTaskView.swift */; };
+		C5CCE032296F7EDD0063A4D8 /* Date+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5CCE031296F7EDD0063A4D8 /* Date+Extension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -104,6 +107,9 @@
 		C5AECF632968AE9B0011E4F2 /* SharedTaskRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedTaskRepository.swift; sourceTree = "<group>"; };
 		C5AECF652968B3610011E4F2 /* SharedTaskListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedTaskListViewModel.swift; sourceTree = "<group>"; };
 		C5AECF672968B39D0011E4F2 /* SharedTaskCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedTaskCellViewModel.swift; sourceTree = "<group>"; };
+		C5CCE02D296F5B6F0063A4D8 /* OfflineTasksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineTasksView.swift; sourceTree = "<group>"; };
+		C5CCE02F296F5CA60063A4D8 /* AddNewOfflineTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewOfflineTaskView.swift; sourceTree = "<group>"; };
+		C5CCE031296F7EDD0063A4D8 /* Date+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extension.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -221,6 +227,8 @@
 				C5AECC272964C49C0011E4F2 /* SettingsView.swift */,
 				C5A2B71C2968C0800066E78C /* AddNewSharedTaskView.swift */,
 				C5A2B7222969E9D50066E78C /* InvitesView.swift */,
+				C5CCE02D296F5B6F0063A4D8 /* OfflineTasksView.swift */,
+				C5CCE02F296F5CA60063A4D8 /* AddNewOfflineTaskView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -257,6 +265,7 @@
 				C5AECC9E29656DE50011E4F2 /* UIImage+Extension.swift */,
 				C5AECF5D29684B440011E4F2 /* ImageLoader.swift */,
 				C5AECF5F29684BD70011E4F2 /* ProfileURLImage.swift */,
+				C5CCE031296F7EDD0063A4D8 /* Date+Extension.swift */,
 			);
 			path = Extras;
 			sourceTree = "<group>";
@@ -411,6 +420,7 @@
 				C5078BAE2948767300BC6A1C /* SharedTasksListView.swift in Sources */,
 				C5AECF662968B3610011E4F2 /* SharedTaskListViewModel.swift in Sources */,
 				C522DC83291084B600097296 /* TaskRepository.swift in Sources */,
+				C5CCE032296F7EDD0063A4D8 /* Date+Extension.swift in Sources */,
 				C5AECC232964C3150011E4F2 /* ProfileView.swift in Sources */,
 				C5078BAC2948711C00BC6A1C /* MainView.swift in Sources */,
 				C5AECDBD296642680011E4F2 /* UserInfo.swift in Sources */,
@@ -421,6 +431,7 @@
 				C522DC6E291026E300097296 /* CustomTask.swift in Sources */,
 				C5A2B725296B42380066E78C /* TaskMembersRepository.swift in Sources */,
 				C5AECF642968AE9B0011E4F2 /* SharedTaskRepository.swift in Sources */,
+				C5CCE030296F5CA60063A4D8 /* AddNewOfflineTaskView.swift in Sources */,
 				C51D5AB9290A9E4B00A6C2C1 /* taskedApp.swift in Sources */,
 				C5A2B71D2968C0800066E78C /* AddNewSharedTaskView.swift in Sources */,
 				C5AECF682968B39D0011E4F2 /* SharedTaskCellViewModel.swift in Sources */,
@@ -431,6 +442,7 @@
 				C5AECC262964C4660011E4F2 /* UserSettings.swift in Sources */,
 				C5AECF6029684BD70011E4F2 /* ProfileURLImage.swift in Sources */,
 				C5AECC2A2964D5290011E4F2 /* StorageManager.swift in Sources */,
+				C5CCE02E296F5B6F0063A4D8 /* OfflineTasksView.swift in Sources */,
 				C5A2B71F2969DECC0066E78C /* TaskInviteRepository.swift in Sources */,
 				C5A2B7212969DEFB0066E78C /* CustomInvite.swift in Sources */,
 			);

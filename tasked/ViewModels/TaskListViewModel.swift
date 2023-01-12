@@ -49,4 +49,8 @@ class TaskListViewModel: ObservableObject {
         taskRepository.restoreTask(task)
     }
     
+    func moveTask(task: CustomTask) {
+        taskRepository.moveTask(task)
+    }
+    
 }

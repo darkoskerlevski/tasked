@@ -39,7 +39,7 @@ struct MyTasksListView: View {
                         .labelsHidden()
                     Text("incomplete?")
                     Spacer()
-                    NavigationLink(destination: AddNewTaskView(task: CustomTask(title: "", completed: false, deleted: false, owner: userManager.getUserID(), taskMembers: [String]()), createNewTask: true, userManager: userManager)) {
+                    NavigationLink(destination: AddNewTaskView(task: CustomTask(title: "", description: "", dueDate: Date.now, completed: false, deleted: false, owner: userManager.getUserID(), taskMembers: [String]()), createNewTask: true, userManager: userManager)) {
                         HStack {
                             Image(systemName: "plus.circle.fill")
                                 .resizable()

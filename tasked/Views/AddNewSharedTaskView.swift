@@ -36,32 +36,85 @@ struct AddNewSharedTaskView: View {
     
     var body: some View {
         VStack {
-            if createNewTask {
-                Text("Add a new task")
-            }
-            else {
-                Text("Edit task")
-            }
-            TextField("Task name", text: $taskName)
-                .foregroundColor(.purple)
-            Toggle(isOn: $taskCompletion) {
-                Text("Completed?")
-            }
-            if !createNewTask {
-                HStack {
-                    TextField("Add members to task by email", text: $inviteMember)
-                        .keyboardType(.emailAddress)
-                    Button {
-                        taskInviteRepository.addInvite(CustomInvite(forTaskID: task.id, forTaskTitle: task.title, forUserEmail: inviteMember, fromEmail: userManager.auth.currentUser!.email!, fromName: userManager.userInfo!.name))
-                        inviteMember = ""
-                    } label: {
-                        Text("Send invite")
+            Group {
+                if createNewTask {
+                    Text("Add a new task")
+                        .padding(.bottom, 20)
+                }
+                else {
+                    Text("Edit task")
+                        .padding(.bottom, 20)
+                }
+                TextField("Task name", text: $taskName)
+                Text("description")
+                    .font(.title3.smallCaps())
+                TextEditor(text: $task.description)
+                    .foregroundColor(.secondary)
+                    .padding(.horizontal)
+                    .frame(height: 150)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(.gray, lineWidth: 4)
+                    )
+                Toggle(isOn: $taskCompletion) {
+                    Text("Completed?")
+                }
+                if !createNewTask {
+                    HStack {
+                        Text("Creation date: ")
+                        Spacer()
+                        Text(task.creationDate)
                     }
-                    .disabled(!isSendInviteButtonDisabled)
+                }
+                HStack {
+                    Text("Due date: ")
+                    Spacer()
+                    DatePicker("Select a date", selection: $task.dueDate, displayedComponents: .date)
+                        .labelsHidden()
+                }
+                if !createNewTask {
+                    HStack {
+                        TextField("Add members to task by email", text: $inviteMember)
+                            .keyboardType(.emailAddress)
+                        Button {
+                            taskInviteRepository.addInvite(CustomInvite(forTaskID: task.id, forTaskTitle: task.title, forUserEmail: inviteMember, fromEmail: userManager.auth.currentUser!.email!, fromName: userManager.userInfo!.name))
+                            inviteMember = ""
+                        } label: {
+                            Text("Send invite")
+                        }
+                        .disabled(!isSendInviteButtonDisabled)
+                    }
                 }
             }
-            Spacer()
-            HStack {
+            if !createNewTask {
+                Text("Members of this task:")
+                    .font(.title3.smallCaps())
+                    .padding(.top, 16)
+            }
+            List {
+                ForEach(taskMembersRepository.members, id: \.self) { member in
+                    VStack {
+                        Text("Email: " + member.email)
+                    }
+                    .swipeActions(edge: .trailing) {
+                        if task.owner == userManager.getUserID() && taskMembersRepository.memberIDPairs[member] != task.owner{
+                            Button(role: .destructive) {
+                                taskListVM.taskRepository.removeTaskMember(task, memberID: taskMembersRepository.memberIDPairs[member]!)
+                            } label: {
+                                Label("Delete", systemImage: "trash.fill")
+                            }
+                        }
+                    }
+                }
+            }
+            .listStyle(.insetGrouped)
+        }
+        .padding([.leading, .trailing], 30)
+        .toast(isPresenting: $showingAlert) {
+            AlertToast(displayMode: .banner(.slide), type: .error(.red), title: "Failure", subTitle: "Task name cannot be empty!")
+        }
+        .toolbar {
+            ToolbarItem {
                 Button(action: {
                     if !taskName.isEmpty {
                         if createNewTask {
@@ -91,40 +144,7 @@ struct AddNewSharedTaskView: View {
                         Text("Save")
                     }
                 }
-                .padding(.trailing, 40)
-                Button(action: {
-                    presentationMode.wrappedValue.dismiss()
-                }) {
-                    Text("Cancel")
-                }
             }
-            .padding(.top, 20)
-            if createNewTask {
-                Text("Members of this task:")
-                    .font(.title2)
-                    .padding(.top, 16)
-            }
-            List {
-                ForEach(taskMembersRepository.members, id: \.self) { member in
-                    VStack {
-                        Text("Email: " + member.email)
-                    }
-                    .swipeActions(edge: .trailing) {
-                        if task.owner == userManager.getUserID() && taskMembersRepository.memberIDPairs[member] != task.owner{
-                            Button(role: .destructive) {
-                                taskListVM.taskRepository.removeTaskMember(task, memberID: taskMembersRepository.memberIDPairs[member]!)
-                            } label: {
-                                Label("Delete", systemImage: "trash.fill")
-                            }
-                        }
-                    }
-                }
-            }
-            .listStyle(.insetGrouped)
-        }
-        .padding(.all, 30)
-        .toast(isPresenting: $showingAlert) {
-            AlertToast(displayMode: .banner(.slide), type: .error(.red), title: "Failure", subTitle: "Task name cannot be empty!")
         }
         
     }

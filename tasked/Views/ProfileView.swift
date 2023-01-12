@@ -12,6 +12,9 @@ import AlertToast
 struct ProfileView: View {
     @State var isPresented: Bool = false
     @State var showLogoutAlert: Bool = false
+    @State var syncAlertPresented: Bool = false
+    @AppStorage("offlineTasks") var offlineTasks: [CustomTask] = [CustomTask]()
+    @AppStorage("offlineDeletedTasks") var offlineDeletedTasks: [CustomTask] = [CustomTask]()
     @ObservedObject var userManager: UserManager
     @ObservedObject var storageManager: StorageManager = StorageManager()
     
@@ -23,19 +26,61 @@ struct ProfileView: View {
                         Header(storageManager: storageManager, userManager: userManager)
                         ProfileText(userManager: userManager)
                     }
+                    .onAppear {
+                        if !offlineTasks.isEmpty || !offlineDeletedTasks.isEmpty {
+                            syncAlertPresented = true
+                        }
+                    }
+                    .alert("Detected offline tasks, how would you like to proceed?", isPresented: $syncAlertPresented) {
+                        Button("Sync with this account") {
+                            userManager.syncTasks(firstTaskList: offlineTasks, secondTaskList: offlineDeletedTasks)
+                            offlineTasks = []
+                            offlineDeletedTasks = []
+                        }
+                        Button("Discard all offline tasks", role: .destructive) {
+                            offlineTasks = []
+                            offlineDeletedTasks = []
+                        }
+                        Button("Log out of the account", role: .cancel) {
+                            userManager.logout()
+                        }
+                        
+                    }
                     Spacer()
-                    HStack {
-                        Button (
-                            action: { self.isPresented = true },
-                            label: {
-                                Label("Edit", systemImage: "pencil")
-                            })
+                    VStack {
+                        Button(action: {
+                            self.isPresented = true
+                        }) {
+                            
+                            Text("Edit profile")
+                                .foregroundColor(.white)
+                                .fontWeight(.bold)
+                                .padding(.vertical)
+                                .padding(.horizontal, 50)
+                                .background(LinearGradient(colors: [.cyan, .red], startPoint: .topLeading, endPoint: .bottomTrailing)
+                                )
+                                .clipShape(Capsule())
+                                .shadow(color: Color.white.opacity(0.1), radius: 5, x: 0, y: 5)
+                                .foregroundColor(.red)
+                        }
+                        .offset(y: 25)
+                        .padding(.bottom, 32)
                         .sheet(isPresented: $isPresented, content: {
                             SettingsView(storageManager: storageManager, userManager: userManager)
                         })
-                        Spacer()
-                        Button(action: { showLogoutAlert.toggle() }) {
-                            Label("Logout", systemImage: "ellipsis.circle")
+                        Button(action: {
+                            showLogoutAlert.toggle()
+                        }) {
+                            Text("Logout")
+                                .foregroundColor(.white)
+                                .fontWeight(.bold)
+                                .padding(.vertical)
+                                .padding(.horizontal, 50)
+                                .background(LinearGradient(colors: [.red, .cyan], startPoint: .topLeading, endPoint: .bottomTrailing)
+                                )
+                                .clipShape(Capsule())
+                                .shadow(color: Color.white.opacity(0.1), radius: 5, x: 0, y: 5)
+                                .foregroundColor(.red)
                         }
                         .alert(isPresented: $showLogoutAlert) {
                             Alert(
@@ -45,6 +90,7 @@ struct ProfileView: View {
                                 secondaryButton: .default(Text("Cancel"), action: { showLogoutAlert = false })
                             )
                         }
+                        .padding(.bottom, 20)
                     }
                     .padding(.bottom, 5)
                 } else {
@@ -293,7 +339,11 @@ struct Header: View {
                 .foregroundColor(Color(red: userManager.r, green: userManager.g, blue: userManager.b, opacity: 1.0))
                 .edgesIgnoringSafeArea(.top)
                 .frame(height: 100)
-            ProfileURLImage()
+            if storageManager.imageReadyAfterUpload {
+                ProfileURLImage()
+            } else {
+                Image(uiImage: (UIImage(systemName: "person.crop.circle.fill")?.scalePreservingAspectRatio(width: 200, height: 150))!)
+            }
         }
     }
 }

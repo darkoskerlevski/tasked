@@ -13,19 +13,27 @@ struct MainView: View {
     
     var body: some View {
         TabView(selection: $tabSelection) {
-            MyTasksListView(userManager: userManager)
-                .tabItem {
-                    Label("My tasks", systemImage: "list.dash")
-                }
-                .tag(1)
+            if userManager.isLoggedIn {
+                MyTasksListView(userManager: userManager)
+                    .tabItem {
+                        Label("My tasks", systemImage: "list.dash")
+                    }
+                    .tag(1)
+            } else {
+                OfflineTasksView()
+                    .tabItem {
+                        Label("My tasks", systemImage: "list.dash")
+                    }
+                    .tag(1)
+            }
             SharedTasksListView(userManager: userManager, tabSelection: $tabSelection)
                 .tabItem {
-                    Label("Shared tasks", systemImage: "square.and.pencil")
+                    Label("Shared tasks", systemImage: "person.2.fill")
                 }
                 .tag(2)
             ProfileView(userManager: userManager)
                 .tabItem {
-                    Label("Account", systemImage: "person")
+                    Label("Account", systemImage: "person.crop.circle.fill")
                 }
                 .tag(3)
         }

@@ -30,6 +30,15 @@ public class UserManager: ObservableObject {
         db.settings = settings
     }
     
+    func syncTasks(firstTaskList: [CustomTask], secondTaskList: [CustomTask]) {
+        for task in firstTaskList {
+            try db.collection("users").document(self.auth.currentUser!.uid).collection("personalTasks").addDocument(data: ["title" : task.title, "description" : task.description, "creationDate" : task.creationDate, "dueDate" : task.dueDate, "completed" : task.completed, "taskMembers" : task.taskMembers, "deleted" : task.deleted])
+        }
+        for task in secondTaskList {
+            try db.collection("users").document(self.auth.currentUser!.uid).collection("personalTasks").addDocument(data: ["title" : task.title, "description" : task.description, "creationDate" : task.creationDate, "dueDate" : task.dueDate, "completed" : task.completed, "taskMembers" : task.taskMembers, "deleted" : task.deleted])
+        }
+    }
+    
     func loadUserData() {
         db.collection("users").document(auth.currentUser!.uid).addSnapshotListener { documentSnapshot, error in
             if let documentSnapshot = documentSnapshot, documentSnapshot.exists {

@@ -1,30 +1,28 @@
 //
-//  AddNewTaskView.swift
+//  AddNewOfflineTask.swift
 //  tasked
 //
-//  Created by Darko Skerlevski on 7.12.22.
+//  Created by Darko Skerlevski on 11.1.23.
 //
 
 import SwiftUI
 import AlertToast
 
-struct AddNewTaskView: View {
+struct AddNewOfflineTaskView: View {
+    @Environment(\.presentationMode) var presentationMode
     @State var taskName: String
     @State var taskCompletion: Bool
     @State var createNewTask: Bool
-    @State var showMoveTaskAlert = false
-    @Environment(\.presentationMode) var presentationMode
-    @ObservedObject var taskListVM = TaskListViewModel()
-    @ObservedObject var userManager: UserManager
     @State private var showingAlert = false
     @State var task: CustomTask
+    @AppStorage("offlineTasks") var offlineTasks: [CustomTask] = [CustomTask]()
+    @AppStorage("offlineDeletedTasks") var offlineDeletedTasks: [CustomTask] = [CustomTask]()
     
-    init(task: CustomTask, createNewTask: Bool, userManager: UserManager) {
+    init(task: CustomTask, createNewTask: Bool) {
         _taskName = State(initialValue: task.title)
         _taskCompletion = State(initialValue: task.completed)
         _createNewTask = State(initialValue: createNewTask)
         _task = State(initialValue: task)
-        _userManager = ObservedObject(initialValue: userManager)
     }
     
     var body: some View {
@@ -64,31 +62,6 @@ struct AddNewTaskView: View {
                 DatePicker("Select a date", selection: $task.dueDate, displayedComponents: .date)
                     .labelsHidden()
             }
-            .padding(.bottom, 32)
-            if !createNewTask && !task.deleted {
-                HStack{
-                    Spacer()
-                    Button {
-                        showMoveTaskAlert = true
-                    } label: {
-                        Text("move to shared tasks")
-                            .font(.title3.smallCaps())
-                    }
-                    .alert(isPresented: $showMoveTaskAlert) {
-                        Alert(
-                            title: Text("Move task?"),
-                            message: Text("Are you sure want to move this task to shared tasks?"),
-                            primaryButton: .default(Text("Move"), action: {
-                                taskListVM.moveTask(task: task)
-                                userManager.userInfo!.sharedTasks.append(task.id)
-                                userManager.updateUserData(userInfo: userManager.userInfo!)
-                            }),
-                            secondaryButton: .destructive(Text("Cancel"), action: { showMoveTaskAlert = false })
-                        )
-                    }
-                    Spacer()
-                }
-            }
         }
         .padding(.all, 30)
         .toast(isPresenting: $showingAlert) {
@@ -99,12 +72,20 @@ struct AddNewTaskView: View {
                 Button(action: {
                     if !taskName.isEmpty {
                         if createNewTask {
-                            taskListVM.addTask(task: CustomTask(title: taskName, description: task.description, dueDate: task.dueDate, completed: taskCompletion, deleted: false, owner: userManager.getUserID(), taskMembers: [userManager.getUserID()]))
+                            offlineTasks.append(CustomTask  (title: taskName, description: task.description, dueDate: task.dueDate, completed: taskCompletion, deleted: false, owner: "", taskMembers: [""]))
                         }
                         else {
                             task.title = taskName
                             task.completed = taskCompletion
-                            taskListVM.updateTask(task: task)
+                            if !task.deleted {
+                                if let i = offlineTasks.firstIndex(where: { $0.id == task.id }) {
+                                    offlineTasks[i] = CustomTask(id: task.id, title: taskName, description: task.description, creationDate: task.creationDate, dueDate: task.dueDate, completed: taskCompletion, deleted: task.deleted, owner: task.owner, taskMembers: task.taskMembers)
+                                }
+                            } else {
+                                if let i = offlineDeletedTasks.firstIndex(where: { $0.id == task.id }) {
+                                    offlineDeletedTasks[i] = CustomTask(id: task.id, title: taskName, description: task.description, creationDate: task.creationDate, dueDate: task.dueDate, completed: taskCompletion, deleted: task.deleted, owner: task.owner, taskMembers: task.taskMembers)
+                                }
+                            }
                         }
                         presentationMode.wrappedValue.dismiss()
                     }
@@ -125,9 +106,8 @@ struct AddNewTaskView: View {
     }
 }
 
-//struct AddNewTaskView_Previews: PreviewProvider {
-//    @State private var task = Task(title: "Temp", completed: false)
+//struct AddNewOfflineTask_Previews: PreviewProvider {
 //    static var previews: some View {
-//        AddNewTaskView(task: $task)
+//        AddNewOfflineTask()
 //    }
 //}

@@ -11,9 +11,11 @@ import FirebaseStorage
 
 public class StorageManager: ObservableObject {
     let storage = Storage.storage()
+    let auth = Auth.auth()
+    @Published var imageReadyAfterUpload = true
 
     func upload(image: UIImage) {
-        let storageRef = storage.reference().child("images/image.jpg")
+        let storageRef = storage.reference().child(auth.currentUser!.uid + "/image.jpg")
 
         let resizedImage = image.scalePreservingAspectRatio(width: 200, height: 200)
 
@@ -29,7 +31,7 @@ public class StorageManager: ObservableObject {
                 }
 
                 if let metadata = metadata {
-                    // SUCCESS
+                    self.imageReadyAfterUpload = true
                 }
             }
         }

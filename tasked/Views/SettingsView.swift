@@ -49,6 +49,7 @@ struct ProfileSettings: View {
                 Label("Pick Profile Image", systemImage: "photo")
             }
             .onChange(of: selectedItem) { newItem in
+                storageManager.imageReadyAfterUpload = false
                 Task {
                     if let data = try? await newItem?.loadTransferable(type: Data.self) {
                         if let uiImage = UIImage(data: data) {
